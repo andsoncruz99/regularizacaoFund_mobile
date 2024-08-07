@@ -1,0 +1,42 @@
+buildscript {
+    ext.kotlin_version = '1.7.0'
+    ext {
+        compileSdkVersion   = 33
+        targetSdkVersion    = 33
+        minSdkVersion       = 24
+        appCompatVersion    = "1.1.0"           // or latest
+    }
+    repositories {
+        google()
+        jcenter()
+       
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+    // TODO: See https://github.com/Lyokone/flutterlocation/issues/802 & https://github.com/Lyokone/flutterlocation/pull/803
+    configurations.all {
+        resolutionStrategy {
+            force "com.google.android.gms:play-services-location:21.0.1"
+        }
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
