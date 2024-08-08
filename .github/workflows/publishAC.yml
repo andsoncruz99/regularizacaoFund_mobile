@@ -1,0 +1,32 @@
+name: Deploy to Client
+
+on:
+  push:
+    branches: [ "main" ]
+  
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps: 
+    - uses: actions/checkout@v4
+    - name: Transfer to AC
+      run: | 
+        export origem=`pwd`
+        echo $origem
+        mkdir /home/runner/tmp
+        cd /home/runner/tmp
+        git clone -b deploy https://${{ secrets.ACUSER }}:${{ secrets.PASSWD }}@git.ac.gov.br/iteracre/regularizacaoFund_mobile.git 
+        git config --global user.email "cesar.santos@ac.gov.br" 
+        git config --global user.name "Cesar Santos"
+        cd regularizacaoFund_mobile
+        cp -R $origem/* .
+        cp -R $origem/.htaccess .
+        git add . 
+        git commit -m "Autodeploy aplicação"
+        git push
